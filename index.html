@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Schools Then & Now (B1+)</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --accent: #2563eb;
+      --accent-2: #22c55e;
+      --warn: #ef4444;
+      --shadow: 0 10px 30px rgba(2,8,23,0.08);
+      --radius: 14px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);}
+    header{padding:24px 16px;background:linear-gradient(180deg,#eef2ff,#fff);border-bottom:1px solid #e5e7eb}
+    .container{max-width:1100px;margin:0 auto;padding:20px}
+    h1{margin:0 0 4px;font-size:28px}
+    .subtitle{color:var(--muted)}
+    section{margin:22px 0}
+    .card{background:var(--card);border:1px solid #e5e7eb;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+    .note{color:var(--muted);font-size:13px}
+    .chip{display:inline-block;padding:2px 8px;border-radius:999px;background:#eef2ff;color:#334155;margin-right:6px;font-size:12px;border:1px solid #e5e7eb}
+
+    /* Warm-up grid (NO CROPPING) */
+    .warmup-grid{display:grid;gap:16px;grid-template-columns:repeat(2,1fr)}
+    .warmup-grid img{width:100%;height:auto;display:block;border-radius:12px;border:1px solid #e5e7eb;box-shadow:var(--shadow)}
+
+    /* Refresher table */
+    table.refresher{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:12px;border:1px solid #e5e7eb}
+    .refresher th,.refresher td{padding:10px 12px;text-align:left}
+    .refresher thead th{background:#f1f5f9}
+
+    /* Worksheet */
+    .worksheet{display:grid;grid-template-columns:320px 1fr;gap:16px}
+    .drag-bank{background:var(--card);border:1px dashed #cbd5e1;border-radius:12px;padding:12px;min-height:240px}
+    .drag-title{font-weight:700;margin-bottom:8px}
+    .draggable{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:8px;margin-bottom:8px;cursor:grab}
+    .draggable img{width:56px;height:56px;object-fit:cover;border-radius:10px;border:1px solid #e5e7eb}
+    .draggable .label{font-size:13px;color:#334155}
+
+    .prompt-row{display:grid;grid-template-columns: 40px 1fr 160px;gap:8px;align-items:start;padding:10px;border:1px solid #e5e7eb;border-radius:12px;margin-bottom:10px;background:#fff}
+    .dropzone{min-height:62px;border:2px dashed #cbd5e1;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#94a3b8}
+    .dropzone.filled{border-style:solid}
+    .actions{display:flex;gap:6px}
+    button{appearance:none;border:1px solid #e5e7eb;background:#111827;color:#fff;padding:8px 10px;border-radius:10px;cursor:pointer;font-size:13px}
+    button.secondary{background:#fff;color:#111827}
+    button.ghost{background:#f8fafc;color:#111827}
+    .feedback{font-size:12px;margin-top:6px}
+    .ok{color:var(--accent-2)}
+    .no{color:var(--warn)}
+    .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+
+    /* Instagram iframe (no inner scroll) */
+    iframe{width:100%;height:900px;border:1px solid #e5e7eb;border-radius:12px;display:block;overflow:hidden;}
+
+    /* ---- KAZANTZAKIS LAYOUT (reworked) ---- */
+    .scene-tray-wrap{position:sticky;top:6px;z-index:5;background:linear-gradient(180deg,#fff,rgba(255,255,255,.9));border:1px solid #e5e7eb;border-radius:12px;padding:10px;margin-bottom:12px;box-shadow:var(--shadow)}
+    .scene-tray{display:flex;gap:10px;overflow-x:auto;padding:6px}
+    .scene-card{flex:0 0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:6px;cursor:grab}
+    .scene-card img{width:120px;height:90px;object-fit:cover;border-radius:8px;display:block}
+    .excerpt-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-bottom:14px}
+    .excerpt-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .excerpt-id{width:32px;height:32px;border-radius:8px;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-weight:700}
+    .excerpt-text{white-space:pre-wrap;line-height:1.5;color:#0f172a}
+    .dropzone.big{margin-top:10px;min-height:100px}
+
+    @media (max-width:820px){
+      .worksheet{grid-template-columns:1fr}
+      .warmup-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Schools Then & Now — Interactive Lesson (B1+)</h1>
+      <div class="subtitle"><strong>✨✍️ Created by Panagiotis Domvros, English and Drama Teacher, All Rights Reserved ✍️✨</strong></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Objectives -->
+    <section class="card">
+      <h2>Objectives</h2>
+      <ul>
+        <li>Compare school life in the past and present.</li>
+        <li>Use modal verbs: <span class="chip">must</span><span class="chip">have to</span><span class="chip">mustn’t</span><span class="chip">can’t</span><span class="chip">can</span><span class="chip">may</span><span class="chip">don’t have to</span><span class="chip">should / ought to</span></li>
+        <li>Collaborate in groups to interpret texts and visuals; present findings.</li>
+      </ul>
+    </section>
+
+    <!-- Warm-up images (no cropping) -->
+    <section class="card">
+      <h2>Warm-up</h2>
+      <div class="warmup-grid">
+        <img src="old.png" alt="Past classroom">
+        <img src="new.png" alt="Modern classroom">
+      </div>
+      <p class="note">Think–Pair–Share: What differences and similarities can you see?</p>
+    </section>
+
+    <!-- KAZANTZAKIS REWORKED -->
+    <section class="card">
+      <h2>Reading & Visual Matching (Michalis Kazantzakis, Nea Pedagogiki) — Drag an Image onto the Correct Excerpt</h2>
+
+      <!-- Sticky tray with the six images -->
+      <div class="scene-tray-wrap">
+        <div class="toolbar">
+          <button id="k-reset" class="ghost">Reset / Reshuffle Images</button>
+          <span class="note">Drag a scene image from the tray onto each excerpt, then press <em>Check</em> for that excerpt.</span>
+        </div>
+        <div id="sceneTray" class="scene-tray" aria-label="Scene image tray"></div>
+      </div>
+
+      <!-- Excerpts list -->
+      <div id="excerptList"></div>
+    </section>
+
+    <!-- Modal refresher -->
+    <section class="card">
+      <h2>Modal Verbs — Quick Refresher</h2>
+      <table class="refresher">
+        <thead>
+        <tr><th>Category</th><th>Forms</th><th>Example</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Obligation / Necessity</td><td>must, have to</td><td>You must do your homework.</td></tr>
+          <tr><td>Prohibition</td><td>mustn’t, can’t</td><td>You mustn’t use your phone in the lab.</td></tr>
+          <tr><td>No obligation</td><td>don’t have to / doesn’t have to</td><td>You don’t have to wear a tie.</td></tr>
+          <tr><td>Permission</td><td>can, may</td><td>Can I open the window? — Yes, you can.</td></tr>
+          <tr><td>Advice</td><td>should, ought to</td><td>You should recycle your rubbish.</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Modal verbs are followed by a bare infinitive.</p>
+    </section>
+
+    <!-- DRAG & DROP WORKSHEET -->
+    <section class="card">
+      <h2>Matching Worksheet — Drag the Correct Image onto the Prompt</h2>
+      <div class="toolbar">
+        <button id="dealBtn" class="secondary">🎴 Deal 4 Random Cards</button>
+        <button id="showAllBtn" class="ghost">Show All 20 Cards</button>
+        <span class="note">Drag an image card onto the matching prompt. Then click <em>Check</em> on that row.</span>
+      </div>
+      <div class="worksheet">
+        <div>
+          <div class="drag-title">Image Card Bank</div>
+          <div id="bank" class="drag-bank"></div>
+        </div>
+        <div>
+          <div id="prompts"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Instagram carousel embed -->
+    <section class="card">
+      <h2>Instagram Carousel — Caption with Modals</h2>
+      <p class="note">Write a funny caption using a modal verb for one slide.</p>
+      <iframe src="insta2.html" title="Instagram Carousel" scrolling="no"></iframe>
+    </section>
+
+    <!-- Debate -->
+    <section class="card">
+      <h2>Mini-Debate: Schools Then vs. Now</h2>
+      <ul>
+        <li><strong>Groups A & B</strong>: Schools in the past were better (discipline, focus, respect).</li>
+        <li><strong>Groups C & D</strong>: Schools today are better (freedom, creativity, student voice).</li>
+        <li><strong>Group E</strong>: Judges. Each speaker must use at least one modal.</li>
+      </ul>
+      <textarea style="width:100%;height:120px;border:1px solid #e5e7eb;border-radius:12px;padding:10px" placeholder="Judges’ notes & verdict…"></textarea>
+    </section>
+  </main>
+
+  <footer class="container">
+    <div class="note">Wrap-up: If you could change one school rule, what would it be?</div>
+  </footer>
+
+  <script>
+    /* ===================== DATA ===================== */
+    const PROMPTS = [
+      { id:1,  text:"You ______ follow the fire chief’s instructions during an emergency.", cat:"Obligation", answer:"must / have to" },
+      { id:2,  text:"You ______ finish your homework before you go to bed.", cat:"Obligation", answer:"must / have to" },
+      { id:3,  text:"You ______ train hard to be ready for the race.", cat:"Obligation", answer:"must / have to" },
+      { id:4,  text:"You ______ water the plants every day to keep them healthy.", cat:"Obligation", answer:"must / have to" },
+      { id:5,  text:"You ______ use your phone in the science lab.", cat:"Prohibition", answer:"mustn’t / can’t" },
+      { id:6,  text:"You ______ run in this playground area.", cat:"Prohibition", answer:"mustn’t / can’t" },
+      { id:7,  text:"You ______ take photos in the museum.", cat:"Prohibition", answer:"mustn’t / can’t" },
+      { id:8,  text:"You ______ talk during the lesson.", cat:"Prohibition", answer:"mustn’t / can’t" },
+      { id:9,  text:"You ______ borrow books from the library if you have a card.", cat:"Permission", answer:"can / may" },
+      { id:10, text:"You ______ open the classroom window if you feel hot.", cat:"Permission", answer:"can / may" },
+      { id:11, text:"You ______ use the computer after you ask your parent.", cat:"Permission", answer:"can / may" },
+      { id:12, text:"You ______ use the tablet when Dad says it’s okay.", cat:"Permission", answer:"can / may" },
+      { id:13, text:"You ______ bring an umbrella today.", cat:"No obligation", answer:"don’t have to" },
+      { id:14, text:"You ______ wear a tie at this office.", cat:"No obligation", answer:"don’t have to" },
+      { id:15, text:"The delivery person ______ get a signature for this parcel.", cat:"No obligation", answer:"doesn’t have to" },
+      { id:16, text:"You ______ bring a briefcase to work here.", cat:"No obligation", answer:"don’t have to" },
+      { id:17, text:"You ______ cross the street at the traffic lights.", cat:"Advice", answer:"should / ought to" },
+      { id:18, text:"You ______ put your rubbish in the recycling bin.", cat:"Advice", answer:"should / ought to" },
+      { id:19, text:"You ______ put the plant in the sun and water it regularly.", cat:"Advice", answer:"should / ought to" },
+      { id:20, text:"You ______ spend time outdoors every day.", cat:"Advice", answer:"should / ought to" },
+    ];
+
+    const IMAGE_CARDS = [
+      {file:"Obligation  Necessity (must, have to).png", label:"Obligation — homework/rules", cat:"Obligation"},
+      {file:"Obligation  Necessity (must, have to) 2.png", label:"Obligation — training/race", cat:"Obligation"},
+      {file:"Obligation  Necessity (must, have to) 3.png", label:"Obligation — plants/watering", cat:"Obligation"},
+      {file:"Obligation  Necessity (must, have to) 4.png", label:"Obligation — follow instructions", cat:"Obligation"},
+
+      {file:"Prohibition (mustn’t, can’t).png", label:"Prohibition — no photos", cat:"Prohibition"},
+      {file:"Prohibition (mustn’t, can’t) 2.png", label:"Prohibition — no running", cat:"Prohibition"},
+      {file:"Prohibition (mustn’t, can’t) 3.png", label:"Prohibition — no phone in lab", cat:"Prohibition"},
+      {file:"Prohibition (mustn’t, can’t) 4.png", label:"Prohibition — quiet in lesson", cat:"Prohibition"},
+
+      {file:"Permission (can, may).png", label:"Permission — library borrow", cat:"Permission"},
+      {file:"Permission (can, may) 2.png", label:"Permission — open window", cat:"Permission"},
+      {file:"Permission (can, may) 3.png", label:"Permission — use computer", cat:"Permission"},
+      {file:"Permission (can, may) 4.png", label:"Permission — use tablet", cat:"Permission"},
+
+      {file:"No Obligation (don’t have to).png", label:"No obligation — umbrella", cat:"No obligation"},
+      {file:"No Obligation (don’t have to) 2.png", label:"No obligation — no tie", cat:"No obligation"},
+      {file:"No Obligation (don’t have to) 3.png", label:"No obligation — no signature", cat:"No obligation"},
+      {file:"No Obligation (don’t have to) 4.png", label:"No obligation — no briefcase", cat:"No obligation"},
+
+      {file:"Advice (should, ought to).png", label:"Advice — traffic lights", cat:"Advice"},
+      {file:"Advice (should, ought to) 2.png", label:"Advice — recycling", cat:"Advice"},
+      {file:"Advice (should, ought to) 3.png", label:"Advice — plant care", cat:"Advice"},
+      {file:"Advice (should, ought to) 4.png", label:"Advice — outdoors", cat:"Advice"},
+    ];
+
+    const EXCERPTS = [
+      {
+        id: 1, title: 'ΜΕΡΟΣ 1',
+        text: `Στην Τετάρτη Τάξη βασίλευε και κυβερνούσε ο Διευθυντής του Δημοτικού. Κοντοπίθαρος, μ' ένα γενάκι σφηνωτό, με γκρίζα πάντα θυμωμένα μάτια, στραβοπόδης. «Δε θωράς, μωρέ, τα πόδια του», λέγαμε ο ένας στον άλλο σιγά να μη μας ακούσει, «δε θωράς, μωρέ, πώς τυλιγαδίζουν τα πόδια του; και πώς βήχει; Δεν είναι Κρητικός». Μας είχε έρθει σπουδασμένος από την Αθήνα κι είχε φέρει, λέει, μαζί του τη Νέα Παιδαγωγική. Θαρρούσαμε πως θα 'ταν καμιά νέα γυναίκα και την έλεγαν Παιδαγωγική· μα όταν τον αντικρίσαμε για πρώτη φορά ήταν ολομόναχος· η Παιδαγωγική έλειπε, θα 'ταν σπίτι. Κρατούσε ένα μικρό στριφτό βούρδουλα, μας έβαλε στη γραμμή κι άρχισε να βγάζει λόγο.`,
+        expectPrefix: '1'
+      },
+      {
+        id: 2, title: 'ΜΕΡΟΣ 2',
+        text: `Έπρεπε, λέει, ό,τι μαθαίναμε να το βλέπαμε και να το αγγίζαμε ή να το ζωγραφίζαμε σ' ένα χαρτί γεμάτο κουκκίδες. Και τα μάτια μας τέσσερα· αταξίες δε θέλει, μήτε γέλια, μήτε φωνές στο διάλειμμα· και σταυρό τα χέρια. Και στο δρόμο, όταν δούμε παπά, να του φιλούμε το χέρι. «Τα μάτια σας τέσσερα, κακομοίρηδες, γιατί αλλιώς, κοιτάχτε εδώ!», είπε και μας έδειξε το βούρδουλα. «Δε λέω λόγια, θα δείτε έργα!»`,
+        expectPrefix: '2'
+      },
+      {
+        id: 3, title: 'ΜΕΡΟΣ 3',
+        text: `Κι αλήθεια είδαμε· όταν κάναμε καμιά αταξία ή όταν δεν ήταν στα κέφια του, μας ξεκούμπωνε, μας κατέβαζε τα πανταλονάκια και μας έδερνε κατάσαρκα με το βούρδουλα· κι όταν βαριόταν να ξεκουμπώσει, μας έδινε βουρδουλιές στ' αυτιά, ωσότου έβγαινε αίμα.`,
+        expectPrefix: '3'
+      },
+      {
+        id: 4, title: 'ΜΕΡΟΣ 4',
+        text: `«Μια μέρα έδεσα κόμπο την καρδιά μου, σήκωσα το δάχτυλο: — Πού είναι, κυρ δάσκαλε, η Νέα Παιδαγωγική; γιατί δεν έρχεται στο σκολειό;»`,
+        expectPrefix: '4'
+      },
+      {
+        id: 5, title: 'ΜΕΡΟΣ 5',
+        text: `Τινάχτηκε από την έδρα, ξεκρέμασε από τον τοίχο το βούρδουλα. — Έλα εδώ, αυθάδη, φώναξε, ξεκούμπωσε το πανταλόνι σου. Βαριόταν να το ξεκουμπώσει μόνος του. — Να, να, να, άρχισε να βαράει και να μουγκρίζει. Είχε ιδρώσει, σταμάτησε. — Να η Νέα Παιδαγωγική, είπε, κι άλλη φορά σκασμός!`,
+        expectPrefix: '5'
+      },
+    ];
+
+    /* ===================== HELPERS ===================== */
+    const bank = document.getElementById('bank');
+    const promptsWrap = document.getElementById('prompts');
+    const sceneTray = document.getElementById('sceneTray');
+    const excerptList = document.getElementById('excerptList');
+
+    function el(tag, attrs={}, children=[]){
+      const e=document.createElement(tag);
+      Object.entries(attrs).forEach(([k,v])=>{
+        if(k==='class') e.className=v; else if(k==='html') e.innerHTML=v; else e.setAttribute(k,v);
+      });
+      children.forEach(c=>e.appendChild(c));
+      return e;
+    }
+
+    /* ===================== WORKSHEET (modals) ===================== */
+    function makeCard(card){
+      const wrap = el('div', {class:'draggable', draggable:'true'});
+      wrap.dataset.cat = card.cat;
+      wrap.dataset.file = card.file;
+      wrap.dataset.label = card.label;
+      wrap.appendChild(el('img', {src: card.file, alt: card.label}));
+      wrap.appendChild(el('div', {class:'label', html: card.label}));
+      wrap.addEventListener('dragstart', ev => {
+        ev.dataTransfer.setData('text/plain', JSON.stringify(card));
+      });
+      return wrap;
+    }
+
+    function makePromptRow(p){
+      const row = el('div', {class:'prompt-row'});
+      const idx = el('div', {html: String(p.id)});
+      const content = el('div');
+      const promptText = el('div', {html: p.text});
+      const drop = el('div', {class:'dropzone', html:'Drop image here'});
+      const fb = el('div', {class:'feedback'});
+
+      drop.addEventListener('dragover', ev => ev.preventDefault());
+      drop.addEventListener('drop', ev => {
+        ev.preventDefault();
+        const data = JSON.parse(ev.dataTransfer.getData('text/plain'));
+        drop.innerHTML = '';
+        drop.classList.add('filled');
+        const thumb = el('div', {style:'display:flex;align-items:center;gap:8px'});
+        thumb.appendChild(el('img', {src:data.file, alt:data.label, style:'width:48px;height:48px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb'}));
+        thumb.appendChild(el('div', {html:data.label, class:'label'}));
+        drop.appendChild(thumb);
+        drop.dataset.cat = data.cat;
+        drop.dataset.file = data.file;
+      });
+
+      const actions = el('div', {class:'actions'});
+      const checkBtn = el('button', {class:'secondary', type:'button'}); checkBtn.textContent = 'Check';
+      const clearBtn = el('button', {class:'ghost', type:'button'}); clearBtn.textContent = 'Clear';
+      actions.appendChild(checkBtn); actions.appendChild(clearBtn);
+
+      checkBtn.addEventListener('click', () => {
+        const chosen = drop.dataset.cat;
+        if(!chosen){ fb.innerHTML = '<span class="no">⚠️ Drop a card first.</span>'; return; }
+        const correct = (chosen === p.cat);
+        fb.innerHTML = correct
+          ? `<span class="ok">✔ Correct. Modal(s): <strong>${p.answer}</strong></span>`
+          : `<span class="no">✖ Not quite. This one needs: <strong>${p.answer}</strong> (category: ${p.cat}).</span>`;
+      });
+
+      clearBtn.addEventListener('click', () => {
+        drop.innerHTML = 'Drop image here';
+        drop.classList.remove('filled');
+        delete drop.dataset.cat; delete drop.dataset.file;
+        fb.textContent = '';
+      });
+
+      content.appendChild(promptText);
+      content.appendChild(fb);
+      row.appendChild(idx);
+      row.appendChild(content);
+      row.appendChild(drop);
+      row.appendChild(actions);
+      return row;
+    }
+
+    function renderPrompts(){
+      promptsWrap.innerHTML='';
+      PROMPTS.forEach(p => promptsWrap.appendChild(makePromptRow(p)));
+    }
+    function renderBank(cards){
+      bank.innerHTML='';
+      cards.forEach(c => bank.appendChild(makeCard(c)));
+    }
+    function dealFour(){
+      const shuffled = [...IMAGE_CARDS].sort(()=>Math.random()-0.5);
+      renderBank(shuffled.slice(0,4));
+    }
+    renderPrompts();
+    renderBank(IMAGE_CARDS);
+    document.getElementById('dealBtn').addEventListener('click', dealFour);
+    document.getElementById('showAllBtn').addEventListener('click', () => renderBank(IMAGE_CARDS));
+
+    /* ===================== KAZANTZAKIS (reworked layout) ===================== */
+    const SCENE_IMAGES = [
+      { file: '0-1.png' }, { file: '1-2.png' }, { file: '2-6.png' },
+      { file: '3-5.png' }, { file: '4-8.png' }, { file: '5-9.png' },
+    ];
+
+    function makeSceneCard(img){
+      const card = el('div', {class:'scene-card', draggable:'true'});
+      card.appendChild(el('img', {src: img.file, alt: ''}));
+      card.dataset.file = img.file;
+      card.addEventListener('dragstart', ev => {
+        ev.dataTransfer.setData('text/plain', img.file);
+      });
+      return card;
+    }
+
+    function makeExcerptCard(ex){
+      const wrap = el('div', {class:'excerpt-card'});
+      const head = el('div', {class:'excerpt-head'});
+      head.appendChild(el('div', {class:'excerpt-id', html:String(ex.id)}));
+      head.appendChild(el('div', {html:`<strong>${ex.title}</strong>`}));
+      const text = el('div', {class:'excerpt-text'});
+      text.textContent = ex.text;
+
+      const drop = el('div', {class:'dropzone big', html:'Drop scene image here'});
+      const fb = el('div', {class:'feedback'});
+
+      drop.addEventListener('dragover', ev => ev.preventDefault());
+      drop.addEventListener('drop', ev => {
+        ev.preventDefault();
+        const file = ev.dataTransfer.getData('text/plain');
+        drop.innerHTML = '';
+        drop.classList.add('filled');
+        const thumb = el('div', {style:'display:flex;align-items:center;gap:10px'});
+        thumb.appendChild(el('img', {src:file, alt:'', style:'width:120px;height:90px;object-fit:cover;border-radius:10px;border:1px solid #e5e7eb'}));
+        drop.appendChild(thumb);
+        drop.dataset.file = file;
+      });
+
+      const actions = el('div', {class:'actions', style:'margin-top:8px'});
+      const checkBtn = el('button', {class:'secondary', type:'button'}); checkBtn.textContent = 'Check';
+      const clearBtn = el('button', {class:'ghost', type:'button'}); clearBtn.textContent = 'Clear';
+      actions.appendChild(checkBtn); actions.appendChild(clearBtn);
+
+      checkBtn.addEventListener('click', () => {
+        const file = drop.dataset.file;
+        if(!file){ fb.innerHTML = '<span class="no">⚠️ Drop an image first.</span>'; return; }
+        const ok = String(file).split('-')[0] === ex.expectPrefix;
+        fb.innerHTML = ok ? '<span class="ok">✔ Correct match.</span>' : '<span class="no">✖ Not this one.</span>';
+      });
+
+      clearBtn.addEventListener('click', () => {
+        drop.innerHTML = 'Drop scene image here';
+        drop.classList.remove('filled');
+        delete drop.dataset.file;
+        fb.innerHTML = '';
+      });
+
+      wrap.appendChild(head);
+      wrap.appendChild(text);
+      wrap.appendChild(drop);
+      wrap.appendChild(actions);
+      wrap.appendChild(fb);
+      return wrap;
+    }
+
+    function renderKaz(){
+      // Excerpts
+      excerptList.innerHTML = '';
+      EXCERPTS.forEach(ex => excerptList.appendChild(makeExcerptCard(ex)));
+      // Scene tray (shuffle each time)
+      sceneTray.innerHTML = '';
+      const shuffled = [...SCENE_IMAGES].sort(()=>Math.random()-0.5);
+      shuffled.forEach(img => sceneTray.appendChild(makeSceneCard(img)));
+    }
+
+    renderKaz();
+    document.getElementById('k-reset').addEventListener('click', renderKaz);
+  </script>
+</body>
+</html>

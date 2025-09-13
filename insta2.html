@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Video Carousel</title>
+    <style>
+        body {
+            background-color: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .instagram-post {
+            width: 100%;
+            max-width: 480px;
+            border: 1px solid #dbdbdb;
+            border-radius: 3px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #dbdbdb;
+        }
+
+        .profile-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .username {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .location {
+            font-size: 12px;
+            color: #8e8e8e;
+        }
+
+        .more-options {
+            margin-left: auto;
+            font-weight: bold;
+        }
+
+        .instagram-carousel {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            height: auto;
+        }
+
+        .carousel-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .carousel-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel-slide {
+            flex: 0 0 100%;
+            width: 100%;
+            scroll-snap-align: start;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: black;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+        }
+        
+        .carousel-controls {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .nav-btn {
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: all;
+        }
+
+        .dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .dot.active {
+            background-color: #fff;
+        }
+        
+        .post-actions {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            margin-right: 16px;
+        }
+        
+        .action-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .action-btn.save {
+            margin-left: auto;
+            margin-right: 0;
+        }
+        
+        .post-info {
+            padding: 0 12px 12px;
+        }
+
+        .likes {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .caption .username {
+            margin-right: 4px;
+        }
+
+        .caption {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .caption .hashtag {
+            color: #00376b;
+        }
+        
+        .view-comments {
+            color: #8e8e8e;
+            font-size: 14px;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+        
+        .add-comment {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-top: 1px solid #efefef;
+        }
+        
+        .add-comment .profile-pic {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+        }
+        
+        .comment-input {
+            border: none;
+            outline: none;
+            flex-grow: 1;
+            font-size: 14px;
+            color: #8e8e8e;
+        }
+        
+        .post-btn {
+            background: none;
+            border: none;
+            color: #0095f6;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            opacity: 0.3;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="instagram-post">
+        <div class="post-header">
+            <img src="teacher.png" alt="Profile Picture" class="profile-pic">
+            <div>
+                <div class="username">desperate-teacher</div>
+                <div class="location">Neverland, Europe</div>
+            </div>
+            <div class="more-options">...</div>
+        </div>
+        
+        <div class="instagram-carousel">
+            <div class="carousel-wrapper">
+                <div class="carousel-slide">
+                    <div class="video-container">
+                        <video src="1.mp4" playsinline muted loop></video>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div class="video-container">
+                        <video src="2.mp4" playsinline muted loop></video>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div class="video-container">
+                        <video src="3.mp4" playsinline muted loop></video>
+                    </div>
+                </div>
+                <div class="carousel-slide">
+                    <div class="video-container">
+                        <video src="4.mp4" playsinline muted loop></video>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-controls">
+                <button class="nav-btn prev-btn" style="display: none;">&#10094;</button>
+                <button class="nav-btn next-btn">&#10095;</button>
+            </div>
+            <div class="dots"></div>
+        </div>
+        
+        <div class="post-actions">
+            <button class="action-btn">
+                <svg aria-label="Like" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-6.03 8.318-3.377 3.359-6.003 5.558-6.162 5.681-.159.123-.37.194-.59.194a.925.925 0 0 1-.59-.194c-.16-.123-2.786-2.322-6.162-5.681C2.652 14.08 0 12.192 0 9.122A4.989 4.989 0 0 1 4.708 3.904a4.904 4.904 0 0 1 3.557 1.453 4.904 4.904 0 0 1 3.557-1.453Z"></path></svg>
+            </button>
+            <button class="action-btn">
+                <svg aria-label="Comment" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><path d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2"></path></svg>
+            </button>
+            <button class="action-btn">
+                 <svg aria-label="Share Post" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><line fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" x1="22" x2="9.218" y1="3" y2="10.083"></line><polygon fill="none" points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334" stroke="currentColor" stroke-linejoin="round" stroke-width="2"></polygon></svg>
+            </button>
+            <button class="action-btn save">
+                <svg aria-label="Save" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><polygon fill="none" points="20 21 12 13.44 4 21 4 3 20 3 20 21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polygon></svg>
+            </button>
+        </div>
+        
+        <div class="post-info">
+            <div class="likes">1,024 likes</div>
+            <div class="caption">
+                <span class="username">desperate-teacher</span>
+                This is a great video carousel! 
+                <span class="hashtag">#coding</span> 
+                <span class="hashtag">#javascript</span> 
+                <span class="hashtag">#webdev</span>
+            </div>
+            <div class="view-comments">View all 16 comments</div>
+        </div>
+
+        <div class="add-comment">
+            <img src="https://placekitten.com/24/24" alt="My Profile Pic" class="profile-pic">
+            <input type="text" class="comment-input" placeholder="Add a comment...">
+            <button class="post-btn">Post</button>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const carouselWrapper = document.querySelector('.carousel-wrapper');
+            const videos = document.querySelectorAll('.carousel-slide video');
+            const prevButton = document.querySelector('.prev-btn');
+            const nextButton = document.querySelector('.next-btn');
+            const dotsContainer = document.querySelector('.dots');
+            let currentSlideIndex = 0;
+
+            if (videos.length > 0) {
+                // Create dots
+                for (let i = 0; i < videos.length; i++) {
+                    const dot = document.createElement('div');
+                    dot.classList.add('dot');
+                    if (i === 0) dot.classList.add('active');
+                    dotsContainer.appendChild(dot);
+                }
+                const dots = document.querySelectorAll('.dot');
+                
+                // Mute the first video and play it
+                videos[0].muted = true;
+                videos[0].play().catch(e => console.error('Initial autoplay blocked:', e));
+
+                // Function to update carousel state
+                function updateCarousel() {
+                    const carouselWidth = carouselWrapper.offsetWidth;
+                    carouselWrapper.scroll({
+                        left: currentSlideIndex * carouselWidth,
+                        behavior: 'smooth'
+                    });
+
+                    // Update dots
+                    dots.forEach((dot, index) => {
+                        dot.classList.toggle('active', index === currentSlideIndex);
+                    });
+                    
+                    // Update nav buttons visibility
+                    prevButton.style.display = currentSlideIndex === 0 ? 'none' : 'flex';
+                    nextButton.style.display = currentSlideIndex === videos.length - 1 ? 'none' : 'flex';
+                }
+
+                // Function to play a video
+                function playVideo(index) {
+                     videos.forEach((video, i) => {
+                        if (i === index) {
+                            video.currentTime = 0;
+                            video.play().catch(e => console.error('Video autoplay prevented:', e));
+                        } else {
+                            video.pause();
+                        }
+                    });
+                }
+
+                // Event listener for the "next" button
+                nextButton.addEventListener('click', () => {
+                    if (currentSlideIndex < videos.length - 1) {
+                        currentSlideIndex++;
+                        updateCarousel();
+                        playVideo(currentSlideIndex);
+                    }
+                });
+
+                // Event listener for the "previous" button
+                prevButton.addEventListener('click', () => {
+                    if (currentSlideIndex > 0) {
+                        currentSlideIndex--;
+                        updateCarousel();
+                        playVideo(currentSlideIndex);
+                    }
+                });
+                
+                // Update on scroll
+                let scrollTimeout;
+                carouselWrapper.addEventListener('scroll', () => {
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
+                        const carouselWidth = carouselWrapper.offsetWidth;
+                        const newIndex = Math.round(carouselWrapper.scrollLeft / carouselWidth);
+                        if (newIndex !== currentSlideIndex) {
+                            currentSlideIndex = newIndex;
+                            updateCarousel();
+                            playVideo(currentSlideIndex);
+                        }
+                    }, 150);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
